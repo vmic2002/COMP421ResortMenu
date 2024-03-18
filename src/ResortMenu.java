@@ -6,7 +6,7 @@ import com.ibm.db2.jcc.DB2Driver;
 public class ResortMenu {
 
 
-	private static final String option1 = "Manager can check for active services";
+	private static final String option1 = "Manager can check for hotel service of a customer for the current date";
 	private static final String option2 = "Make a customer account";
 	private static final String option3 = "Delete a customer account";
 	private static final String option4 = "Book Trip";
@@ -27,10 +27,15 @@ public class ResortMenu {
 		String your_password = "gRoupcpv1924!";
 		//TODO AS AN ALTERNATIVE, you can just set your password in the shell environment in the Unix (as shown below) and read it from there.
 		//$  export SOCSPASSWD=yoursocspasswd 
-		Connection con = (Connection) DriverManager.getConnection(url,your_userid,your_password);
+		Connection con;
+		System.out.println("Connecting to database...");
+		try {con = (Connection) DriverManager.getConnection(url,your_userid,your_password);}
+		catch (Exception e) {System.out.println("Could not connect to database... Are you sure you are connected to the mcgill wifi or vpn?\nExiting...");return;}
+		System.out.println("Connected to database successfully...");
 		Statement statement = con.createStatement();
 
-		System.out.println("HELLO");
+
+		System.out.println("Starting resort menu...");
 		Scanner sc= new Scanner(System.in); //System.in is a standard input stream
 		while (true) {
 			System.out.println("Resort Main Menu:");
@@ -41,9 +46,15 @@ public class ResortMenu {
 			System.out.println("\t5. "+option5);
 			System.out.println("\t6. "+option6);
 			System.out.print("Enter option: ");  
-			String str= sc.nextLine();//reads string   
+			String str= sc.nextLine();//reads string
 			if (str.equals("1")) {
-				option1(statement);
+				System.out.println("Enter email address of customer:");
+				String emailAddress = sc.nextLine();
+				if (!customerAccountExists(statement, emailAddress)) {
+					System.out.println("No customer account exists with this email address!");
+				} else {
+					option1(statement, emailAddress);
+				}
 			} else if (str.equals("2")) {
 				System.out.println("Enter email address:");
 				String emailAddress = sc.nextLine();
@@ -90,7 +101,17 @@ public class ResortMenu {
 					option4(statement, email, reservationType, numDays, numPeople, pickupTime, airportName, date);
 				}
 			} else if (str.equals("5")) {
-				option5(statement);
+				System.out.println("Enter the number of vacation days that every employee will use: (>0)");
+				String numberOfDays = sc.nextLine();
+				try {
+					int n = Integer.valueOf(numberOfDays);
+					if (n<=0) {
+						System.out.println("Value must be >0 !");	
+					} else {
+						option5(statement, numberOfDays);	
+					}
+				}
+				catch (Exception e) {System.out.println("Value must be an integer!");}
 			} else if (str.equals("6")) {
 				System.out.println("Quitting...");
 				break;
@@ -133,9 +154,33 @@ public class ResortMenu {
 
 
 
-	private static void option1(Statement statement) {
-		String sql = "TODO";
-		sendUpdateRequest(statement, sql);
+	private static void option1(Statement statement, String email) {
+		//DONE
+		String sql = "SELECT hs.serviceID, hs.emailAddress, t.tripID, t.date, t.reservationType\n"
+				+ "FROM HotelService hs\n"
+				+ "JOIN Trip t ON hs.emailAddress = t.emailAddress\n"
+				+ "WHERE t.date <= CURRENT_DATE and CURRENT_DATE<= t.date+t.numDays and hs.emailAddress = '"+email+"'\n"
+				+ "ORDER BY t.date ASC";
+		ResultSet rs;
+		try {
+			rs = statement.executeQuery(sql);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return;
+		}
+		try {
+			System.out.println("serviceID, emailAddress, tripID, date, reservationType");
+			while (rs.next()) {
+				int serviceID = rs.getInt(1) ;
+				String tripID = rs.getString(3);
+				String date = rs.getString(4);
+				String reservationType = rs.getString(5);
+				System.out.println(serviceID+", "+email+", "+tripID+", "+date+", "+reservationType);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return;
+		}
 	}
 	private static void option2(Statement statement, String emailAddress, String cardNumber, String fullName, String dateOfBirth) {
 		//DONE
@@ -190,8 +235,10 @@ public class ResortMenu {
 		String sql = "INSERT INTO Trip (tripID, emailAddress, reservationType, numDays, numPeopleInParty, pickupTime, airportName, date) VALUES ("+(maxID+1)+", '"+email+"', '"+reservationType+"', "+numDays+", "+numPeople+", '"+pickupTime+"', '"+airportName+"', '"+date+"')";
 		sendUpdateRequest(statement, sql);
 	}
-	private static void option5(Statement statement) {
-		String sql = "TODO";
+	private static void option5(Statement statement, String numDays) {
+		//DONE
+		String sql = "UPDATE StaffMembers\n"
+				+ "SET vacationDaysUsed = vacationDaysUsed + "+numDays+"";
 		sendUpdateRequest(statement, sql);
 	}
 }
