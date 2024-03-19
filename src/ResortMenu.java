@@ -139,7 +139,7 @@ public class ResortMenu {
 
 	private static void sendUpdateRequest(Statement statement, String sql) {
 		try {
-			System.out.println(sql);
+			//System.out.println(sql);
 			statement.executeUpdate(sql);
 		} catch (SQLException e) {
 			int sqlCode = e.getErrorCode(); // Get SQLCODE
@@ -170,13 +170,18 @@ public class ResortMenu {
 		}
 		try {
 			System.out.println("serviceID, emailAddress, tripID, date, reservationType");
-			while (rs.next()) {
+            if (!rs.next()) {
+                System.out.println("Zero entries...");
+                return;
+            }
+            do {
 				int serviceID = rs.getInt(1) ;
 				String tripID = rs.getString(3);
 				String date = rs.getString(4);
 				String reservationType = rs.getString(5);
 				System.out.println(serviceID+", "+email+", "+tripID+", "+date+", "+reservationType);
-			}
+			} while (rs.next());
+            
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return;
