@@ -111,8 +111,8 @@ public class ResortMenu {
 						System.out.println("Value must be >0 !");	
 					} else {
 						option5(statement, numberOfDays);
-	                    System.out.println("Vacations days updated successfully...");
-                    }	
+						System.out.println("Vacations days updated successfully...");
+					}	
 				}
 				catch (Exception e) {System.out.println("Value must be an integer!");}
 			} else if (str.equals("6")) {
@@ -167,18 +167,18 @@ public class ResortMenu {
 		}
 		try {
 			System.out.println("serviceID, emailAddress, tripID, date, reservationType");
-            if (!rs.next()) {
-                System.out.println("Zero entries...");
-                return;
-            }
-            do {
+			if (!rs.next()) {
+				System.out.println("Zero entries...");
+				return;
+			}
+			do {
 				int serviceID = rs.getInt(1) ;
 				String tripID = rs.getString(3);
 				String date = rs.getString(4);
 				String reservationType = rs.getString(5);
 				System.out.println(serviceID+", "+email+", "+tripID+", "+date+", "+reservationType);
 			} while (rs.next());
-            
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return;
@@ -213,21 +213,22 @@ public class ResortMenu {
 			e.printStackTrace();
 			return;
 		}
-        
-        sql = "DELETE FROM BreakfastService WHERE serviceID IN (SELECT serviceID FROM HotelService WHERE emailAddress = 'emily.clark@example.com');";//delete breakfast services associated with account 
-        sendUpdateRequest(statement, sql);	
-        sql = "DELETE FROM GolfCartService WHERE serviceID IN (SELECT serviceID FROM HotelService WHERE emailAddress = 'emily.clark@example.com');";//delete golfcartservice associated with account
-
-        sendUpdateRequest(statement, sql);
-        sql = "";//delete trips associated with account
-        sendUpdateRequest(statement, sql);
-        sql = "";//delete hotel services associated with account
-        sendUpdateRequest(statement, sql);
-
-                
-        sql = "DELETE FROM CustomerAccount WHERE emailAddress = '"+email+"'";
-		sendUpdateRequest(statement, sql);
-        System.out.println("Customer account deleted successfully...");
+		try {
+			sql = "DELETE FROM BreakfastService WHERE serviceID IN (SELECT serviceID FROM HotelService WHERE emailAddress = '"+email+"')";//delete breakfast services associated with account 
+			sendUpdateRequest(statement, sql);  
+			sql = "DELETE FROM GolfCartService WHERE serviceID IN (SELECT serviceID FROM HotelService WHERE emailAddress = '"+email+"')";//delete golfcartservice associated with account
+			sendUpdateRequest(statement, sql);
+			sql = "DELETE FROM HotelService WHERE emailAddress = '"+email+"'";//delete hotel services associated with account
+			sendUpdateRequest(statement, sql);
+			sql = "DELETE FROM Trip WHERE emailAddress = '"+email+"'";//delete trips associated with account
+			sendUpdateRequest(statement, sql);
+			sql = "DELETE FROM CustomerAccount WHERE emailAddress = '"+email+"'";//delete customer account associated with emailaddress
+			sendUpdateRequest(statement, sql);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return;
+		}
+		System.out.println("Customer account deleted successfully...");
 	}
 
 	private static void option4(Statement statement, String email, String reservationType, String numDays, String numPeople, String pickupTime, String airportName, String date) {
