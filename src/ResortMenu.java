@@ -68,6 +68,7 @@ public class ResortMenu {
 					System.out.println("Enter date of birth: (YYYY-MM-DD)");
 					String dateOfBirth = sc.nextLine();
 					option2(statement, emailAddress, cardNumber, fullName, dateOfBirth);
+					System.out.println("Customer account created successfully...");
 				}
 			} else if (str.equals("3")) {
 				System.out.println("Enter email address:");
@@ -78,6 +79,7 @@ public class ResortMenu {
 					System.out.println("Enter card number:");//CARD NUMBER SERVES AS PASSWORD
 					String cardNumber = sc.nextLine();
 					option3(statement, emailAddress, cardNumber);
+					System.out.println("Customer account deleted successfully...");
 				}
 			} else if (str.equals("4")) {
 				System.out.println("Login Menu:");
@@ -99,6 +101,7 @@ public class ResortMenu {
 					System.out.println("Enter the arrival date: (YYYY-MM-DD)");
 					String date = sc.nextLine();
 					option4(statement, email, reservationType, numDays, numPeople, pickupTime, airportName, date);
+					System.out.println("Trip booked successfully...");
 				}
 			} else if (str.equals("5")) {
 				System.out.println("Enter the number of vacation days that every employee will use: (>0)");
@@ -108,8 +111,9 @@ public class ResortMenu {
 					if (n<=0) {
 						System.out.println("Value must be >0 !");	
 					} else {
-						option5(statement, numberOfDays);	
-					}
+						option5(statement, numberOfDays);
+	                    System.out.println("Vacations days updated successfully...");
+                    }	
 				}
 				catch (Exception e) {System.out.println("Value must be an integer!");}
 			} else if (str.equals("6")) {
