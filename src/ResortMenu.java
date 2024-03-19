@@ -143,20 +143,14 @@ public class ResortMenu {
 
 	private static void sendUpdateRequest(Statement statement, String sql) {
 		try {
-			//System.out.println(sql);
 			statement.executeUpdate(sql);
 		} catch (SQLException e) {
 			int sqlCode = e.getErrorCode(); // Get SQLCODE
 			String sqlState = e.getSQLState(); // Get SQLSTATE
-
-			// Your code to handle errors comes here;
-			// something more meaningful than a print would be good
 			System.out.println("Code: " + sqlCode + "  sqlState: " + sqlState);
 			System.out.println(e);
 		}
 	}
-
-
 
 	private static void option1(Statement statement, String email) {
 		//DONE
@@ -191,11 +185,13 @@ public class ResortMenu {
 			return;
 		}
 	}
+
 	private static void option2(Statement statement, String emailAddress, String cardNumber, String fullName, String dateOfBirth) {
 		//DONE
 		String sql = "INSERT INTO CustomerAccount (emailAddress, cardNumber, fullName, dateOfBirth) VALUES ('"+emailAddress+"', "+cardNumber+", '"+fullName+"', '"+dateOfBirth+"')";
 		sendUpdateRequest(statement, sql);
 	}
+
 	private static void option3(Statement statement, String email, String cardNumber) {
 		//DONE
 		//perform select to make sur cardnumber matches, if it does delete account. if it doesnt, print wrong card number could not delete account
@@ -221,6 +217,7 @@ public class ResortMenu {
 		sql = "DELETE FROM CustomerAccount WHERE emailAddress = '"+email+"'";
 		sendUpdateRequest(statement, sql);
 	}
+
 	private static void option4(Statement statement, String email, String reservationType, String numDays, String numPeople, String pickupTime, String airportName, String date) {
 		//DONE
 		//first find max trip id and increment by one for new trip entry
@@ -244,6 +241,7 @@ public class ResortMenu {
 		String sql = "INSERT INTO Trip (tripID, emailAddress, reservationType, numDays, numPeopleInParty, pickupTime, airportName, date) VALUES ("+(maxID+1)+", '"+email+"', '"+reservationType+"', "+numDays+", "+numPeople+", '"+pickupTime+"', '"+airportName+"', '"+date+"')";
 		sendUpdateRequest(statement, sql);
 	}
+
 	private static void option5(Statement statement, String numDays) {
 		//DONE
 		String sql = "UPDATE StaffMembers\n"
