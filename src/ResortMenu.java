@@ -79,7 +79,6 @@ public class ResortMenu {
 					System.out.println("Enter card number:");//CARD NUMBER SERVES AS PASSWORD
 					String cardNumber = sc.nextLine();
 					option3(statement, emailAddress, cardNumber);
-					System.out.println("Customer account deleted successfully...");
 				}
 			} else if (str.equals("4")) {
 				System.out.println("Login Menu:");
@@ -216,6 +215,7 @@ public class ResortMenu {
 		}
 		sql = "DELETE FROM CustomerAccount WHERE emailAddress = '"+email+"'";
 		sendUpdateRequest(statement, sql);
+        System.out.println("Customer account deleted successfully...");
 	}
 
 	private static void option4(Statement statement, String email, String reservationType, String numDays, String numPeople, String pickupTime, String airportName, String date) {
